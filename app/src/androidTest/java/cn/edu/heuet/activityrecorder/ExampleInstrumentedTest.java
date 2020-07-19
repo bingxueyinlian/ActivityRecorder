@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("cn.edu.heuet.activityrecordernocalender", appContext.getPackageName());
+        assertEquals("cn.edu.heuet.activityrecorder", appContext.getPackageName());
     }
 }

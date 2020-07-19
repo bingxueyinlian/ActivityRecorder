@@ -8,26 +8,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import android.os.Environment;
 import android.util.Log;
 
 public class FileUtils {
-    private String SDPATH = null;
-    private String dirName = null;
-    private String timeFileName = null;
-    private String typeFileName = null;
+    private String timeFileName;
+    private String typeFileName;
     private String TAG = "FileUtils";
 
     public FileUtils(String dirName, String timeFileName, String typeFileName)
             throws IOException {
         // 获取SD卡目录
-        SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/";
-        this.dirName = SDPATH + dirName + "/";
-        this.timeFileName = this.dirName + timeFileName;
-        this.typeFileName = this.dirName + typeFileName;
-        createSDDir(this.dirName);
+        String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        String dirName1 = SDPATH + dirName + "/";
+        this.timeFileName = dirName1 + timeFileName;
+        this.typeFileName = dirName1 + typeFileName;
+        createSDDir(dirName1);
         createSDFile(this.timeFileName);
         createSDFile(this.typeFileName);
     }
@@ -48,26 +47,25 @@ public class FileUtils {
         File file = new File(dir);
         boolean success = file.mkdir();
         if (!success) {
-            // System.out.println("目录已存在");
+            Log.i(TAG, "目录已存在");
         }
         return file;
     }
 
     /**
      * 将msg追加到写入SD文件中
-     *
-     * @throws IOException
      */
-    public void appendLine(String msg) throws IOException {
+    public void appendLine(String msg) {
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(
-                    this.timeFileName, true), "GB2312");
+                    this.timeFileName, true), StandardCharsets.UTF_8);
             writer.write(msg + "\r\n");
         } catch (Exception e) {
             Log.i(TAG, "appendLine write==>" + e);
         } finally {
             try {
+                assert writer != null;
                 writer.close();
             } catch (Exception e2) {
                 Log.i(TAG, "appendLine close==>" + e2);
@@ -77,8 +75,6 @@ public class FileUtils {
 
     /**
      * 添加活动类型，如果活动类型已经存在，则忽略
-     *
-     * @throws IOException
      */
     public boolean addActivityType(String msg) {
         if (isTypeExist(msg))
@@ -87,13 +83,14 @@ public class FileUtils {
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(
-                    this.typeFileName, true), "GB2312");
+                    this.typeFileName, true), StandardCharsets.UTF_8);
             writer.write(msg + "\r\n");
         } catch (Exception e) {
             Log.i(TAG, "appendLine write==>" + e);
             return false;
         } finally {
             try {
+                assert writer != null;
                 writer.close();
             } catch (Exception e2) {
                 Log.i(TAG, "appendLine close==>" + e2);
@@ -110,7 +107,7 @@ public class FileUtils {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(
-                    this.typeFileName), "GB2312"));
+                    this.typeFileName), StandardCharsets.UTF_8));
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (msg.equals(line))
@@ -120,6 +117,7 @@ public class FileUtils {
             e.printStackTrace();
         } finally {
             try {
+                assert br != null;
                 br.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -137,7 +135,7 @@ public class FileUtils {
         ArrayList<String> result = new ArrayList<String>();
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(
-                    this.typeFileName), "GB2312"));
+                    this.typeFileName), StandardCharsets.UTF_8));
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (!line.equals("") && !result.contains(line))
@@ -147,6 +145,7 @@ public class FileUtils {
             e.printStackTrace();
         } finally {
             try {
+                assert br != null;
                 br.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -159,10 +158,10 @@ public class FileUtils {
     /**
      * 获取当前正在执行的活动类型，如果没有则返回null
      */
-    public String GetCurrentActivityName() {
+    public String getCurrentActivityName() {
         try {
             File file = new File(this.timeFileName);
-            String lastLine = readLastLine(file, "GB2312");
+            String lastLine = readLastLine(file);
             if (lastLine == null || lastLine.equals(""))
                 return null;
             String[] data = lastLine.split(",");
@@ -173,13 +172,13 @@ public class FileUtils {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     // 读取一行数据
-    public static String readLastLine(File file, String charset)
-            throws IOException {
+    public static String readLastLine(File file) {
         if (!file.exists() || file.isDirectory() || !file.canRead()) {
             return null;
         }
@@ -203,18 +202,16 @@ public class FileUtils {
                 }
                 byte[] bytes = new byte[(int) (len - pos)];
                 raf.read(bytes);
-                if (charset == null) {
-                    return new String(bytes);
-                } else {
-                    return new String(bytes, charset);
-                }
+                return new String(bytes, StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             if (raf != null) {
                 try {
                     raf.close();
                 } catch (Exception e2) {
+                    e2.printStackTrace();
                 }
             }
         }

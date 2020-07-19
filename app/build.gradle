@@ -5,8 +5,8 @@ android {
     buildToolsVersion "30.0.1"
 
     defaultConfig {
-        applicationId "cn.edu.heuet.activityrecordernocalender"
-        minSdkVersion 16
+        applicationId 'cn.edu.heuet.activityrecorder'
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
         versionName "1.2020.0719"

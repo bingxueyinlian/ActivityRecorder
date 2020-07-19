@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             fillSpinner();
 
             // 初使化
-            curActivity = fileUtils.GetCurrentActivityName();
+            curActivity = fileUtils.getCurrentActivityName();
             if (curActivity != null && !curActivity.equals("")) {
                 int index = arrActivity.indexOf(curActivity);
                 if (index != -1) {
@@ -189,11 +189,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             String time = new SimpleDateFormat("yyyyMMddHHmmss",
                     Locale.getDefault()).format(new Date());
             String msg = curActivity + "," + status + "," + time;
-            try {
-                fileUtils.appendLine(msg);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            fileUtils.appendLine(msg);
         }
     }
 
