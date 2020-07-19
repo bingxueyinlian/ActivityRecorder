@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">活动记录</string>
+    <string name="action_settings">Settings</string>
+    <string name="activityType">活动类型</string>
+    <string name="addActivity">添加活动</string>
+    <string name="inputactivityname">请输入活动名称</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="start">开始</string>
+    <string name="end">结束</string>
+    <string name="permission_storage">此应用需要文件存储权限,请您允许.</string>
+    <string name="doing">中…</string>
+</resources>
